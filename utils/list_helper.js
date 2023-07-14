@@ -53,7 +53,7 @@ const mostBlogs = (blogs) => {
       )
     }
   }
-  // default sort order is ascending:
+  // default .sort() order is ascending:
   numberOfBlogs.sort((a,b) => a.blogs - b.blogs)
   return numberOfBlogs[numberOfBlogs.length - 1]
 }
