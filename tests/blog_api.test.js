@@ -6,7 +6,7 @@ const helper = require('./test_helper')
 // wrap express app with supertest so tests can use it to make HTTP requests to the backend
 const api = supertest(app)
 
-// initialize database before tests
+// initialize database before each test
 beforeEach(async () => {
   await Blog.deleteMany({})
 
@@ -21,6 +21,12 @@ test('blogs are returned in JSON format', async () => {
     .get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
+})
+
+test('there are two blogs', async () => {
+  const response = await api.get('/api/blogs')
+
+  expect(response.body).toHaveLength(2)
 })
 
 afterAll(async () => {
