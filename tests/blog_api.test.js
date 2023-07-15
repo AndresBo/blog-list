@@ -91,6 +91,19 @@ test('when adding a new blog, if title is missing, respond with 400 bad request'
     .expect(400)
 }, 10000)
 
+test('when adding a new blog, if url is missing, respond with 400 bad request', async () => {
+  const newBlog = {
+    title: 'test blog for POST request',
+    author: 'example person for POST a blog test',
+    likes: 1000
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+}, 10000)
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
