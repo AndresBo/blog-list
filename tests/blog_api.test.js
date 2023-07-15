@@ -25,7 +25,7 @@ test('blogs are returned in JSON format', async () => {
 
 test('there are two blogs', async () => {
   const response = await api.get('/api/blogs')
-  console.log(response)
+
   expect(response.body).toHaveLength(2)
 })
 
@@ -37,7 +37,7 @@ test('blogs have property named id', async () => {
 
 test('a valid blog can be added', async () => {
   const newBlog = {
-    title: 'example blog for POST a blog test',
+    title: 'test blog for POST request',
     author: 'example person for POST a blog test',
     url: 'example url',
     likes: 1000
@@ -56,6 +56,27 @@ test('a valid blog can be added', async () => {
   expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
   expect(contents).toContain('example blog for POST a blog test')
 }, 10000)
+
+test('when adding a blog, if likes property is missing, it defaults to 0', async () => {
+  // new blog without likes property
+  const newBlog = {
+    title: 'test blog for POST request',
+    author: 'example author',
+    url: 'example url'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  const likes = response.body.map(r => r.likes)
+  expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+  expect(likes).toContain(0)
+})
 
 afterAll(async () => {
   await mongoose.connection.close()
