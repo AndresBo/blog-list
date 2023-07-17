@@ -108,6 +108,26 @@ describe('addition of a new blog', () => {
   }, 10000)
 })
 
+describe('deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogsAtStart = await api.get('/api/blogs')
+
+    const blogToDelete = blogsAtStart.body[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const notesAtEnd = await api.get('/api/blogs')
+
+    expect(notesAtEnd.body).toHaveLength(helper.initialBlogs.length - 1)
+
+    const titles = notesAtEnd.body.map(r => r.title)
+
+    expect(titles).not.toContain(blogToDelete.title)
+  },)
+})
+
 // close connection with database after all tests run
 afterAll(async () => {
   await mongoose.connection.close()
