@@ -128,6 +128,27 @@ describe('deletion of a blog', () => {
   },)
 })
 
+describe('updating a blog', () => {
+  test('succeeds updating likes with valid data', async () => {
+    // get all blogs at start of request
+    const blogsAtStart = await api.get('/api/blogs')
+    // make a shallow copy of blog to be updated using spread syntax
+    const blogToUpdate = { ...blogsAtStart.body[0] }
+
+    blogToUpdate.likes += 1
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(blogToUpdate)
+      .expect(204)
+
+    const notesAtEnd = await api.get('/api/blogs')
+
+    expect(notesAtEnd.body[0].likes).toEqual(blogToUpdate.likes)
+
+  })
+})
+
 // close connection with database after all tests run
 afterAll(async () => {
   await mongoose.connection.close()
