@@ -12,7 +12,7 @@ usersRouter.post('/', async (request, response, next) => {
   const { username, name, password } = request.body
 
   // don't validate password with mongoose validation in the schema, the password received by
-  // backend and the hash saved to bd are different things.
+  // backend and the hash saved to db are different things.
   if (!password) {
     return response.status(400).json({ error: 'password is required' })
   } else if (password.length < 3) {
