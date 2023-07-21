@@ -1,8 +1,14 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-  username: String,
+  username: {
+    type: String,
+    required: [true, 'Username is required'],
+    unique: true,
+    minLength: [3, 'Username is too short']
+  },
   name: String,
+  // do not test password restrictions with Mongoose validation. use the controller
   passwordHash: String,
   blogs: [
     {
