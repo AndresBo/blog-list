@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/users')
 
-// helper function isolates the token from the authorization header (MOVED TO MIDDLEWARE)
+// helper function isolates the token from the authorization header (MOVED TO MIDDLEWARE tokenExtractor)
 // const getTokenFrom = request => {
 //   const authorization = request.get('authorization')
 
@@ -55,8 +55,22 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+  // find the blog
+  const blog = await Blog.findById(request.params.id)
+
+  //get logged-in user token
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  // compare user who created the blog to logged in user
+  if (blog.user.toString() === decodedToken.id) {
+    await Blog.findByIdAndRemove(request.params.id)
+    response.status(204).end()
+  } else {
+    return response.status(401).json({ error: 'Unauthorized to delete the blog' })
+  }
+
 })
 // using promises:
 // blogsRouter.delete('/:id', (request, response) => {

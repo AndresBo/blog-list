@@ -24,7 +24,8 @@ const unknownEndPoint = (request, response) => {
 
 const errorHandler = (error, request, response, next) => {
   console.log('HI FROM ERROR HANDLER')
-  logger.error(error.message)
+  logger.error('ERROR MESSAGE', error.message)
+  logger.error('ERROR NAME', error.name)
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
