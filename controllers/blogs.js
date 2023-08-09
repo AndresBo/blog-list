@@ -14,8 +14,13 @@ const User = require('../models/users')
 // }
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1})
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
+})
+
+blogsRouter.get('/:id', async (request, response) => {
+  const blog = await Blog.find({ _id:request.params.id }).populate('user', { username: 1, name: 1 })
+  response.json(blog)
 })
 
 blogsRouter.post('/', async (request, response) => {
@@ -88,10 +93,12 @@ blogsRouter.put('/:id', async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
+    user: body.user
   }
+  // The backend returns the blog populated with user to POSTMAN, but the front end gets unpopulated blog???
+  const updateBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true }).populate('user', { name: 1 })
 
-  await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-  response.status(204).json(blog)
+  return response.json(updateBlog).status(201)
 })
 
 module.exports = blogsRouter
