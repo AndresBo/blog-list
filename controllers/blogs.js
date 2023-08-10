@@ -95,8 +95,8 @@ blogsRouter.put('/:id', async (request, response) => {
     likes: body.likes,
     user: body.user
   }
-  // The backend returns the blog populated with user to POSTMAN, but the front end gets unpopulated blog???
-  const updateBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true }).populate('user', { name: 1 })
+
+  const updateBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true }).populate('user', { username: 1, name: 1 })
 
   return response.json(updateBlog).status(201)
 })
