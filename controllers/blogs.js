@@ -27,7 +27,7 @@ blogsRouter.post('/', async (request, response) => {
 
   const body = request.body
   // check validity of jwtoken and decodes the token into the object it was based on
-  //const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  // PREV VERSION-- const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
@@ -52,11 +52,13 @@ blogsRouter.post('/', async (request, response) => {
   }
 
   const savedBlog = await blog.save()
-
+  // add to user list of created blogs
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
+  // get the blog that was just saved and populate it with name of user who created it
+  const populatedSavedBlog = await Blog.find({ _id:savedBlog._id }).populate('user', { name: 1 })
 
-  response.status(201).json(savedBlog)
+  response.status(201).json(populatedSavedBlog)
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
