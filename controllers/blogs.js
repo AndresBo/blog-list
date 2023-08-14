@@ -13,16 +13,19 @@ const User = require('../models/users')
 //   return null
 // }
 
+// GET ALL
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
+// GET INDIVIDUAL
 blogsRouter.get('/:id', async (request, response) => {
   const blog = await Blog.find({ _id:request.params.id }).populate('user', { username: 1, name: 1 })
   response.json(blog)
 })
 
+// CREATE A NEW BLOG
 blogsRouter.post('/', async (request, response) => {
 
   const body = request.body
@@ -61,10 +64,10 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(populatedSavedBlog)
 })
 
+// DELETE A BLOG
 blogsRouter.delete('/:id', async (request, response) => {
   // find the blog
   const blog = await Blog.findById(request.params.id)
-
   //get logged-in user token
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if (!decodedToken.id) {
@@ -87,6 +90,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 //     })
 // })
 
+// UPDATE A BLOG
 blogsRouter.put('/:id', async (request, response) => {
   const body = request.body
 
